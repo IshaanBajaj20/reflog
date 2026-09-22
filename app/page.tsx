@@ -19,7 +19,7 @@ export default async function Home({
   const errorMessage = typeof error === "string" ? (ERRORS[error] ?? "Something went wrong.") : null;
 
   return (
-    <main className="relative mx-auto flex min-h-dvh w-full max-w-2xl flex-col justify-center gap-10 px-6 py-16 [padding-bottom:calc(4rem+env(safe-area-inset-bottom))] [padding-top:calc(4rem+env(safe-area-inset-top))]">
+    <main className="page-frame relative mx-auto flex min-h-dvh w-full max-w-2xl flex-col justify-center gap-10">
       <header className="space-y-5">
         <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted">
           Reflog · {DEFAULT_YEAR}

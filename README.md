@@ -44,8 +44,8 @@ and never reaches the browser or the database.
 | Field | Value |
 |-------|-------|
 | Application name | Reflog (dev) |
-| Homepage URL | `http://localhost:3000` |
-| Authorization callback URL | `http://localhost:3000/api/auth/callback` |
+| Homepage URL | `http://localhost:3003` |
+| Authorization callback URL | `http://localhost:3003/api/auth/callback` |
 
 Register a **second, separate** OAuth app for production once deployed, with the
 Vercel URL in both fields — GitHub allows only one callback URL per app.
@@ -67,12 +67,13 @@ npm install
 npm run dev
 ```
 
-Open <http://localhost:3000>, click **Continue with GitHub**, approve the scopes,
+Open <http://localhost:3003>, click **Continue with GitHub**, approve the scopes,
 and you land on `/debug` with the raw payload.
 
-> **Port 3000 must be free.** The OAuth callback URL registered with GitHub has to
-> match exactly. If something else holds the port, run `npm run dev -- -p 3001`
-> *and* change both `NEXT_PUBLIC_APP_URL` and the GitHub callback URL to `3001`.
+> **The dev port is pinned to 3003** in the `dev` script, because the OAuth callback
+> URL registered with GitHub has to match exactly and Next.js silently hops to
+> another port when one is busy. To change it, update the `dev` script,
+> `NEXT_PUBLIC_APP_URL`, and the GitHub callback URL together.
 
 ## Environment variables
 

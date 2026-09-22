@@ -3,6 +3,7 @@
 @theme inline {
   --font-display: var(--font-space-grotesk);
   --font-mono: var(--font-jetbrains-mono);
+  --font-serif: var(--font-instrument-serif);
 
   --color-ink: #05060a;
   --color-ink-soft: #0b0d14;
@@ -44,4 +45,245 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ---------------------------------------------------------------------------
+   Slide background layers.
+
+   Depth comes from parallax, not from more colour: three blurred orbs drift on
+   different durations, directions and easings, so they slide past each other
+   instead of moving as one sheet. Durations are deliberately long and mutually
+   prime-ish (29s / 41s / 53s) so the composition never visibly loops.
+   --------------------------------------------------------------------------- */
+
+.reflog-grain {
+  /* feTurbulence is a few hundred bytes and needs no network request, which is
+     why it beats shipping a noise PNG. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+.reflog-orb {
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform;
+  /* Promote to its own layer so the blur is rasterised once, not every frame. */
+  transform: translateZ(0);
+}
+
+.reflog-orb-a {
+  animation: reflog-orb-a 29s ease-in-out infinite alternate;
+}
+.reflog-orb-b {
+  animation: reflog-orb-b 41s ease-in-out infinite alternate;
+}
+.reflog-orb-c {
+  animation: reflog-orb-c 53s ease-in-out infinite alternate;
+}
+
+@keyframes reflog-orb-a {
+  from {
+    transform: translate3d(-8%, -6%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(12%, 10%, 0) scale(1.22);
+  }
+}
+
+@keyframes reflog-orb-b {
+  from {
+    transform: translate3d(10%, 8%, 0) scale(1.15);
+  }
+  to {
+    transform: translate3d(-9%, -7%, 0) scale(0.92);
+  }
+}
+
+@keyframes reflog-orb-c {
+  from {
+    transform: translate3d(0, 6%, 0) scale(0.95);
+  }
+  to {
+    transform: translate3d(-6%, -9%, 0) scale(1.3);
+  }
+}
+
+/* A very slow hue sweep across the whole slide, low enough opacity that it
+   reads as the light changing rather than as a colour animation. */
+.reflog-sweep {
+  animation: reflog-sweep 70s linear infinite;
+  will-change: transform;
+}
+
+@keyframes reflog-sweep {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reflog-orb-a,
+  .reflog-orb-b,
+  .reflog-orb-c,
+  .reflog-sweep {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Safe-area frames.
+
+   These live in CSS rather than as Tailwind arbitrary properties because
+   Tailwind emits `pt-20` AFTER `[padding-top:calc(...)]` at equal specificity,
+   so the plain utility silently wins and the inset is dropped. On a notched
+   phone that puts the eyebrow under the notch. Writing the rule here makes the
+   cascade order explicit and lets the responsive step keep its inset too.
+   --------------------------------------------------------------------------- */
+
+.slide-frame {
+  padding-inline: 1.5rem;
+  padding-top: calc(5rem + env(safe-area-inset-top));
+  padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+  padding-left: calc(1.5rem + env(safe-area-inset-left));
+  padding-right: calc(1.5rem + env(safe-area-inset-right));
+}
+
+@media (min-width: 640px) {
+  .slide-frame {
+    padding-top: calc(4.5rem + env(safe-area-inset-top));
+    padding-bottom: calc(3rem + env(safe-area-inset-bottom));
+    padding-left: calc(3rem + env(safe-area-inset-left));
+    padding-right: calc(3rem + env(safe-area-inset-right));
+  }
+}
+
+@media (min-width: 1024px) {
+  .slide-frame {
+    padding-top: calc(5rem + env(safe-area-inset-top));
+    padding-bottom: calc(3rem + env(safe-area-inset-bottom));
+    padding-left: calc(4rem + env(safe-area-inset-left));
+    padding-right: calc(4rem + env(safe-area-inset-right));
+  }
+}
+
+/* Bleed slides keep the vertical frame but give up the side gutters, so a
+   treemap or an iceberg can actually reach the edge of the viewport. The
+   safe-area insets stay — a notch still has to be respected. */
+.slide-frame--bleed {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+.story-progress {
+  padding-top: calc(0.85rem + env(safe-area-inset-top));
+  padding-left: calc(1rem + env(safe-area-inset-left));
+  padding-right: calc(1rem + env(safe-area-inset-right));
+}
+
+@media (min-width: 640px) {
+  /* Bleed slides keep the vertical frame but give up the side gutters, so a
+   treemap or an iceberg can actually reach the edge of the viewport. The
+   safe-area insets stay — a notch still has to be respected. */
+.slide-frame--bleed {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+.story-progress {
+    padding-left: calc(3rem + env(safe-area-inset-left));
+    padding-right: calc(3rem + env(safe-area-inset-right));
+  }
+}
+
+@media (min-width: 1024px) {
+  /* Bleed slides keep the vertical frame but give up the side gutters, so a
+   treemap or an iceberg can actually reach the edge of the viewport. The
+   safe-area insets stay — a notch still has to be respected. */
+.slide-frame--bleed {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+.story-progress {
+    padding-left: calc(4rem + env(safe-area-inset-left));
+    padding-right: calc(4rem + env(safe-area-inset-right));
+  }
+}
+
+.story-footer {
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+}
+
+.page-frame {
+  padding-inline: 1.5rem;
+  padding-top: calc(4rem + env(safe-area-inset-top));
+  padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+}
+
+/* ---------------------------------------------------------------------------
+   Display type scale.
+
+   Every size is clamped against BOTH axes: `min(Nvw, Nvh)`. Sizing off width
+   alone is what caused text to clip — a 1440x700 laptop has plenty of width and
+   almost no height, so a headline set in vw overflowed a frame that could not
+   scroll. Taking the smaller of the two means a slide fits whatever shape the
+   viewport happens to be.
+
+   The rem bounds stop the scale collapsing on a phone or ballooning on a 4K
+   display, where vw units stop tracking anything a reader cares about.
+   --------------------------------------------------------------------------- */
+
+.type-numeral {
+  font-size: clamp(3.5rem, min(16vw, 24vh), 11rem);
+  line-height: 0.82;
+  letter-spacing: -0.04em;
+}
+
+.type-hero {
+  font-size: clamp(2.25rem, min(8vw, 10vh), 5.5rem);
+}
+
+.type-display {
+  font-size: clamp(1.75rem, min(5.5vw, 7vh), 4rem);
+}
+
+.type-title {
+  font-size: clamp(1.35rem, min(4vw, 5vh), 2.75rem);
+}
+
+.type-body {
+  font-size: clamp(0.8125rem, min(1.5vw, 2vh), 1.0625rem);
+}
+
+/* ---------------------------------------------------------------------------
+   Short viewports. Slides never scroll — a story that scrolls is not a story —
+   so the frame tightens instead.
+   --------------------------------------------------------------------------- */
+
+@media (max-height: 760px) {
+  .slide-frame {
+    padding-top: calc(3.75rem + env(safe-area-inset-top));
+    padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-height: 620px) {
+  .slide-frame {
+    padding-top: calc(3rem + env(safe-area-inset-top));
+    padding-bottom: calc(0.85rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Nothing inside a slide may refuse to shrink. Flex children default to
+   `min-height: auto`, which makes them overflow their parent rather than
+   compress — the other half of why content was clipping.
+   --------------------------------------------------------------------------- */
+
+.slide-frame * {
+  min-height: 0;
+  min-width: 0;
 }
