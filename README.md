@@ -12,16 +12,16 @@ The generated text is generous and specific. It never roasts.
 
 ## Status
 
-Milestone 1 of 8 — scaffold and GitHub OAuth working end to end, with a `/debug`
-page that prints the raw fetched data.
+Milestone 4 of 8 — GitHub OAuth, the data layer, stats with unit tests, and the
+slide deck shell are in. Next up: the nine slides.
 
 | # | Milestone | State |
 |---|-----------|-------|
 | 1 | Scaffold + GitHub OAuth, raw data dump | done |
-| 2 | Data layer: personal + org repos, languages by bytes, private contributions | next |
-| 3 | Stats computation + unit tests | |
-| 4 | Slide shell: container, gestures, progress bar | |
-| 5 | All nine slides, rule-based archetype | |
+| 2 | Data layer: personal + org repos, languages by bytes, private contributions | done |
+| 3 | Stats computation + unit tests | done |
+| 4 | Slide shell: container, gestures, progress bar | done |
+| 5 | All nine slides, rule-based archetype | next |
 | 6 | LLM layer (Groq, rule-based fallback) + caching | |
 | 7 | Share links, OG images, PNG export | |
 | 8 | Privacy page, rate limiting, polish | |
